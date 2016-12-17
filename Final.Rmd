@@ -26,6 +26,7 @@ library(broom)
 The initial motivation for my project came merely from the fact that I am a minority in my major, Computer Science, and I will continue being a minority in the related field of software engineering in the year to come. 
 
 What interested me was that although high schools are federally required to give equal education to all their students in all fields, a gender and minority split occurs in some fields, including STEM (Science, Technology, Engineering, Math): 
+
 [Source](https://nsf.gov/nsb/sei/edTool/data/highschool-05.html)\
 
 ![](high_school.png)
