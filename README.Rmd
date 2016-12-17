@@ -14,23 +14,126 @@ output:
 ---
 
 
-* Name: 
-* Project title:
-* Write-up on RPubs: <http://rpubs.com/rudeboybert/Tree_Growth_Differences>
-* Abstract: Hello World!
+* Name: Shannia Fu
+* Project title: Gender and Race in STEM
+* Write-up on RPubs: <http://rpubs.com/shannia/gender-race_stem>
+* Abstract: It's well known that there is both gender and racial inequality in the STEM fields. There are a lot of statistics on many STEM related industries that show that the number of white men is disproportionately high. When does this split occur, however? What does the university-level data show us about this split? My project uses data from IPEDS, the Integrated Postsecondary Educaton Data System, to visualize the statistics on STEM in higher education.
 
 
-```{r, echo=FALSE, message=FALSE}
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 #
 # Include code for one plot here
 #
 library(ggplot2)
 library(dplyr)
-small <- sample_n(diamonds, 2000) 
-ggplot(data=diamonds, aes(x=carat,y=price,colour=cut)) +
-  geom_point() +
-  scale_y_log10() + 
-  facet_wrap(~cut) +
-  ggtitle("Replace this plot with one of your own")
+library(readr)
+schools <- read_csv("schools.csv")
+schools_w_single_sex <- schools
+schools <- schools_w_single_sex %>% 
+  filter(institution != "Agnes Scott College") %>% 
+  filter(institution !="Alverno College") %>% 
+  filter(institution != "Barnard College") %>% 
+  filter(institution != "Bay Path University") %>% 
+  filter(institution != "Bennett College for Women") %>% 
+  filter(institution != "Brenau University") %>% 
+  filter(institution != "Bryn Mawr College") %>% 
+  filter(institution != "Cedar Crest College") %>% 
+  filter(institution != "College of Saint Mary") %>% 
+  filter(institution != "Columbia College") %>% 
+  filter(institution != "Converse College") %>% 
+  filter(institution != "Cottey College") %>% 
+  filter(institution != "Hollins University") %>% 
+  filter(institution != "Judson College") %>% 
+  filter(institution != "Mary Baldwin College") %>% 
+  filter(institution != "Meredith College") %>% 
+  filter(institution != "Midway University") %>% 
+  filter(institution != "Mills College") %>% 
+  filter(institution != "Moore College of Art and Design") %>% 
+  filter(institution != "Mount Holyoke College") %>% 
+  filter(institution != "Mount Mary University") %>% 
+  filter(institution != "Mount Saint Mary's University, Los Angeles") %>% 
+  filter(institution != "Notre Dame of Maryland University") %>% 
+  filter(institution != "Russell Sage College of The Sage Colleges") %>% 
+  filter(institution != "St. Catherine University") %>% 
+  filter(institution != "Saint Mary's College") %>% 
+  filter(institution != "Salem College") %>% 
+  filter(institution != "Scripps College") %>% 
+  filter(institution != "Simmons College") %>% 
+  filter(institution != "Smith College") %>% 
+  filter(institution != "Spelman College") %>% 
+  filter(institution != "Stephens College") %>% 
+  filter(institution != "Sweet Briar College") %>% 
+  filter(institution != "Trinity Washington University") %>% 
+  filter(institution != "University of Saint Joseph") %>% 
+  filter(institution != "Ursuline College") %>% 
+  filter(institution != "Wellesley College") %>% 
+  filter(institution != "Wesleyan College") %>% 
+  filter(institution != "The Women's College of the University of Denver") %>% 
+  filter(institution != "Hampden–Sydney College") %>% 
+  filter(institution != "Morehouse College") %>% 
+  filter(institution != "Saint John's University") %>% 
+  filter(institution != "Wabash College") %>% 
+  filter(institution != "Williamson Free School of Mechanical Trades")
+
+overall_race <- schools %>% 
+  select(total, total_amind, total_alien, total_asian, total_black, total_hapac, total_hisp, total_twoplus, total_unk, total_white) %>% 
+  mutate(amind = total_amind/total) %>% 
+  mutate(alien = total_alien/total) %>% 
+  mutate(asian = total_asian/total) %>% 
+  mutate(black = total_black/total) %>% 
+  mutate(hapac = total_hapac/total) %>% 
+  mutate(hisp = total_hisp/total) %>% 
+  mutate(twoplus = total_twoplus/total) %>% 
+  mutate(unk = total_unk/total) %>% 
+  mutate(white = total_white/total) %>% 
+  na.omit() %>% 
+  summarise_each(funs(mean)) %>% 
+  t() %>% 
+  melt() %>% 
+  filter(!grepl("total", Var1)) %>% 
+  mutate(topic = "overall")
+
+overall_women_race <- schools %>% 
+  select(total_women, total_amind, total_alien, total_asian, total_black, total_hapac, total_hisp, total_twoplus, total_unk, total_white, women_amind, women_alien, women_asian, women_black, women_hapac, women_hisp, women_twoplus, women_unk, women_white) %>% 
+  mutate(amind = women_amind/total_women) %>% 
+  mutate(alien = women_alien/total_women) %>% 
+  mutate(asian = women_asian/total_women) %>% 
+  mutate(black = women_black/total_women) %>% 
+  mutate(hapac = women_hapac/total_women) %>% 
+  mutate(hisp = women_hisp/total_women) %>% 
+  mutate(twoplus = women_twoplus/total_women) %>% 
+  mutate(unk = women_unk/total_women) %>% 
+  mutate(white = women_white/total_women) %>% 
+  na.omit() %>% 
+  summarise_each(funs(mean)) %>% 
+  t() %>% 
+  melt() %>% 
+  filter(!grepl("women", Var1), !grepl("total", Var1)) %>% 
+  mutate(topic = "women")
+
+overall_men_race <- schools %>% 
+  select(total_men, total_amind, total_alien, total_asian, total_black, total_hapac, total_hisp, total_twoplus, total_unk, total_white, men_amind, men_alien, men_asian, men_black, men_hapac, men_hisp, men_twoplus, men_unk, men_white) %>% 
+  mutate(amind = men_amind/total_men) %>% 
+  mutate(alien = men_alien/total_men) %>% 
+  mutate(asian = men_asian/total_men) %>% 
+  mutate(black = men_black/total_men) %>% 
+  mutate(hapac = men_hapac/total_men) %>% 
+  mutate(hisp = men_hisp/total_men) %>% 
+  mutate(twoplus = men_twoplus/total_men) %>% 
+  mutate(unk = men_unk/total_men) %>% 
+  mutate(white = men_white/total_men) %>% 
+  na.omit() %>% 
+  summarise_each(funs(mean)) %>% 
+  t() %>% 
+  melt() %>% 
+  filter(!grepl("men", Var1), !grepl("total", Var1)) %>% 
+  mutate(topic = "men")
+
+race_overall <- rbind(overall_women_race, overall_race, overall_men_race)
+
+ggplot(race_overall, aes(x = Var1, y = value, fill = topic)) + 
+  geom_bar(stat="identity", position = "dodge") +
+  coord_flip() +
+  labs(title = "Racial breakdown, with gender", x = "Race", y = "Proportion", fill = "Type")
 ```
 
